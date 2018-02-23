@@ -1,16 +1,13 @@
 #!/usr/bin/env node
-const binetree = require('./binary_tree.js');
-const Equation = require('./node_modules/equations/equation.js').default;
+const fs = require('fs');
+const Parser = require('expr-eval').Parser;
+const ProgressBar = require('progress');
 
 const numbers = [1,2,3,4,5,6,7,8,9];
-// const operations = ['+', '-', '*', '^'];
-const operations = ['-'];
+const operations = ['+', '-', '*', '^', '||'];
+// const operations = ['-'];
 const NUMBER_KEY = 'I';
 const OPERATION_KEY = 'P';
-
-// let tree = binetree('(1 + 2 + 3 + 5) * 6');
-
-// console.log(tree);
 
 /**
  * Sets up the grouping in an equation.
@@ -119,13 +116,54 @@ function applyOperation(equation, operationSet) {
   return equation;
 }
 
-const operationSets = generateOperationSets(numbers, operations);
+// Short-circuiting, and saving a parse operation
+function isInt(value) {
+  var x;
+  if (isNaN(value)) {
+    return false;
+  }
+  x = parseFloat(value);
+  return (x | 0) === x;
+}
 
-const shiftEquations = generateShiftEquations(numbers);
+function getResults(numbers, operations) {
+  // Get all of the operations and equations
+  const operationSets = generateOperationSets(numbers, operations);
+  const shiftEquations = generateShiftEquations(numbers);
+  let results = [];
 
-let tempEquation = applyOperation(shiftEquations[3], operationSets[0]);
-// let tree = binetree(tempEquation);
-console.log(tempEquation);
-// console.log(tempEquation + ' = ' + tree.result);
-console.log(tempEquation + ' = ' + Equation.solve(tempEquation));
-// console.log(typeof Equation.default.solve);
+  // Save all of the potential equations and operations
+  for (let operationSetIndex = 0; operationSetIndex < operationSets.length; operationSetIndex ++) {
+    for (let shiftEquationIndex = 0; shiftEquationIndex < shiftEquations.length; shiftEquationIndex ++) {
+      let shiftEquation = shiftEquations[shiftEquationIndex];
+      let operationSet = operationSets[operationSetIndex];
+      let tempEquation = applyOperation(shiftEquation, operationSet);
+      let parser = new Parser();
+      let expr = parser.parse(tempEquation);
+      let result = parseInt(expr.evaluate());
+
+      if (result >= 0 && result <= 11111 && isInt(result)) {
+        if (results[result] === undefined) {
+          results[result] = tempEquation + " = " + result;
+        }
+      }
+    }
+  }
+
+  return results;
+}
+
+
+/**
+ * Goes through all of the results and saves them
+ * 
+ * @param  {array} results The results.
+ */
+function saveResults(results) {
+  fs.writeFile('./result/' + 1 + '.txt', '');
+  for (let index in results) {
+    fs.appendFile('./result/' + 1 + '.txt', results[index] + "\n");
+  }
+}
+
+saveResults(getResults(numbers, operations));
