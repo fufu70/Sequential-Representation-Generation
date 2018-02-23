@@ -8,3 +8,5 @@ To run the project with node
 $ npm install
 $ node index.js
 ```
+
+It will save all of the results in result/1.txt
