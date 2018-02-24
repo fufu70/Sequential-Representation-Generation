@@ -126,6 +126,16 @@ function isInt(value) {
   return (x | 0) === x;
 }
 
+/**
+ * Gets all of the results with the provided numbers, operations and seeked value. 
+ * If no value is provided then the method will get all values from 0 to 11111.
+ * 
+ * @param  {array}  numbers    An array of all the numbers in sequential order
+ * @param  {array}  operations An array of all of the operations avaiable to utilize
+ * @param  {number} value      The value to search for.
+ * @return {array}             An array of arrays where the index is the value and the 
+ *                             index references all of the equations that equal that index
+ */
 function getResults(numbers, operations, value) {
   // Get all of the operations and equations
   const operationSets = generateOperationSets(numbers, operations);
