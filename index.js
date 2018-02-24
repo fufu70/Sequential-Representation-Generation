@@ -126,7 +126,7 @@ function isInt(value) {
   return (x | 0) === x;
 }
 
-function getResults(numbers, operations) {
+function getResults(numbers, operations, value) {
   // Get all of the operations and equations
   const operationSets = generateOperationSets(numbers, operations);
   const shiftEquations = generateShiftEquations(numbers);
@@ -142,9 +142,12 @@ function getResults(numbers, operations) {
       let expr = parser.parse(tempEquation);
       let result = parseInt(expr.evaluate());
 
-      if (result >= 0 && result <= 11111 && isInt(result)) {
+      if (result >= 0 && result <= 11111 && isInt(result) && 
+        ((value !== undefined && result == value) || value == undefined)) {
         if (results[result] === undefined) {
-          results[result] = tempEquation + " = " + result;
+          results[result] = [];
+        } else {
+          results[result].push(tempEquation);
         }
       }
     }
@@ -153,17 +156,21 @@ function getResults(numbers, operations) {
   return results;
 }
 
-
 /**
  * Goes through all of the results and saves them
  * 
  * @param  {array} results The results.
  */
 function saveResults(results) {
-  fs.writeFile('./result/' + 1 + '.txt', '');
+
+  fs.writeFile('./results.csv', 'result,equation\n');
   for (let index in results) {
-    fs.appendFile('./result/' + 1 + '.txt', results[index] + "\n");
+    let indexResults = "";
+    for (let equationIndex in results[index]) {
+      indexResults += index + ',' + results[index][equationIndex] + "\n";
+    }
+    fs.appendFile('./results.csv', indexResults);
   }
 }
 
-saveResults(getResults(numbers, operations));
+saveResults(getResults(numbers, operations, process.argv[2]));
