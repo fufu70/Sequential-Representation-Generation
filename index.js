@@ -183,4 +183,8 @@ function saveResults(results) {
   }
 }
 
-saveResults(getResults(numbers, operations, process.argv[2]));
+saveResults(getResults(
+  (process.argv[3] != undefined) ? eval(process.argv[3]) : numbers,
+  (process.argv[4] != undefined) ? eval(process.argv[4]) : operations,
+  process.argv[2]
+));
