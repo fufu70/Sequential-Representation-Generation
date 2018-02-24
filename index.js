@@ -186,5 +186,5 @@ function saveResults(results) {
 saveResults(getResults(
   (process.argv[3] != undefined) ? eval(process.argv[3]) : numbers,
   (process.argv[4] != undefined) ? eval(process.argv[4]) : operations,
-  process.argv[2]
+  (process.argv[2] == "*") ? undefined : process.argv[2]
 ));
