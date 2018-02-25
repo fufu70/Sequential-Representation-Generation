@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const Parser = require('expr-eval').Parser;
-const ProgressBar = require('progress');
 
 const numbers = [1,2,3,4,5,6,7,8,9];
 const operations = ['+', '-', '*', '^', '||'];
@@ -14,9 +13,18 @@ const OPERATION_KEY = 'P';
  * 
  * @param  {number} count The amount of numbers in the equation
  * @param  {number} shift The shift from left to right.
+ * @param  {number} depth How many groups are suppose to exist.
  * @return {string}       The equation.
  */
-function generateEquation(count, shift) {
+function generateEquation(count, shift, depth) {
+
+  if (depth == 0) {
+    let group = [];
+    for (let i = 0; i < count; i ++) {
+      group.push(NUMBER_KEY);
+    } 
+    return group.join(` ${ OPERATION_KEY } `);
+  }
 
   if (count == 1) {
     return NUMBER_KEY;
@@ -30,7 +38,7 @@ function generateEquation(count, shift) {
     let left = Math.round(count * (shift / count));
     let right = Math.round(count * (1 - (shift / count)));
 
-    return ` ( ${ generateEquation(left, shift) } ) ${ OPERATION_KEY } ( ${ generateEquation(right, shift) } ) `;
+    return ` ( ${ generateEquation(left, shift, depth - 1) } ) ${ OPERATION_KEY } ( ${ generateEquation(right, shift, depth - 1) } ) `;
   }
 }
 
@@ -60,15 +68,26 @@ function generateShiftEquations(numbers) {
   
   const count = numbers.length;
   let equations = [];
+  let lastEquationLength = 0;
+  let depth = 0;
 
-  for (let shift = 1; shift < count; shift ++) {
-    equations.push(
-      insertOrder(
-        generateEquation(count, shift), 
-        numbers
-      )
-    );
-  }
+  do {
+    lastEquationLength = equations.length;
+    for (let shift = 1; shift < count; shift ++) {
+      equations.push(
+        insertOrder(
+          generateEquation(count, shift, depth), 
+          numbers
+        )
+      );
+    }
+
+    equations = equations.filter(function (equation, index, equations) {
+      return equations.lastIndexOf(equation) === index;
+    });
+
+    depth ++;
+  } while (lastEquationLength < equations.length)
 
   return equations;
 }
@@ -152,7 +171,7 @@ function getResults(numbers, operations, value) {
       let expr = parser.parse(tempEquation);
       let result = parseInt(expr.evaluate());
 
-      if (result >= 0 && result <= 11111 && isInt(result) && 
+      if (result >= 0 && result <= 11111 && isInt(result) &&
         ((value !== undefined && result == value) || value == undefined)) {
         if (results[result] === undefined) {
           results[result] = [];
