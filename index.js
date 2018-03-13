@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const Parser = require('expr-eval').Parser;
+const Groups = require('./groups.js');
 
 const numbers = [1,2,3,4,5,6,7,8,9];
+// const numbers = [1,2,3,4,5];
 const operations = ['+', '-', '*', '^', '||'];
 const NUMBER_KEY = 'I';
 const OPERATION_KEY = 'P';
@@ -41,6 +43,62 @@ function generateEquation(count, shift, depth) {
   }
 }
 
+function generateGroupEquation(numbers) {
+  let groups = Groups.generate(numbers.length);
+  let joinNumbers = `) ${OPERATION_KEY} (`;
+  let strGroups = {};
+
+  for (let groupIndex in groups) {
+    let group = groups[groupIndex];
+    strGroups[groupIndex] = [];
+
+    for (let equationIndex = 0; equationIndex < group.length; equationIndex ++ ) {
+      strGroups[groupIndex].push(`(${group[equationIndex].join(joinNumbers)})`);
+    }
+  }
+
+  let newStrGroups = {};
+
+  for (let groupIndex in strGroups) {
+    let group = strGroups[groupIndex];
+    let currentValue = parseInt(groupIndex);
+    newStrGroups[groupIndex] = [];
+
+    for (let equationIndex = 0; equationIndex < group.length; equationIndex ++ ) {
+      let str = group[equationIndex];
+
+      if (groupIndex == 2) {
+        newStrGroups[groupIndex].push(str.replace(/1/g, NUMBER_KEY));
+      } else {
+        // go through all potential numbers in the string at this point
+        for (let searchableValue = group.length - 1; searchableValue > 1; searchableValue --) {
+          // if this equation has this value lets add more values to it.
+          // saGrpEqIndex == Searchable Group Equation Index
+          if (str.indexOf(searchableValue) !== -1) {
+            let searchableEquations = newStrGroups[searchableValue];
+            for (let saGrpEqIndex in newStrGroups[searchableValue]) {
+              let newStr = str.replace(new RegExp(searchableValue, "g"), searchableEquations[saGrpEqIndex]);
+              newStr = newStr.replace(/1/g, NUMBER_KEY);
+
+              newStrGroups[groupIndex].push(newStr);
+            } 
+          } else {
+            newStrGroups[groupIndex].push(str.replace(/1/g, NUMBER_KEY));
+          }
+        }
+      }
+    }
+
+    newStrGroups[groupIndex] = newStrGroups[groupIndex].filter(function(equation, index, newStrGroups) {
+      return !(/\d/g.test(equation));
+    }).filter(function (equation, index, equations) {
+      return equations.lastIndexOf(equation) === index;
+    });;
+  }
+
+  return newStrGroups[numbers.length];
+}
+
 /**
  * Inserts the order of numbers into the given equation.
  * 
@@ -66,27 +124,14 @@ function insertOrder(equation, order) {
 function generateShiftEquations(numbers) {
   
   const count = numbers.length;
+  let group = generateGroupEquation(numbers);
   let equations = [];
   let lastEquationLength = 0;
   let depth = 0;
 
-  do {
-    lastEquationLength = equations.length;
-    for (let shift = 1; shift < count; shift ++) {
-      equations.push(
-        insertOrder(
-          generateEquation(count, shift, depth), 
-          numbers
-        )
-      );
-    }
-
-    equations = equations.filter(function (equation, index, equations) {
-      return equations.lastIndexOf(equation) === index;
-    });
-
-    depth ++;
-  } while (lastEquationLength < equations.length)
+  for (let equationIndex in group) {
+    equations.push(insertOrder(group[equationIndex], numbers));
+  }
 
   return equations;
 }
