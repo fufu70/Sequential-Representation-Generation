@@ -157,7 +157,6 @@ function getResults(numbers, operations, value) {
   const shiftEquations = generateShiftEquations(numbers);
   let results = {};
 
-  // Save all of the potential equations and operations
   for (let operationSetIndex = 0; operationSetIndex < operationSets.length; operationSetIndex ++) {
     for (let shiftEquationIndex = 0; shiftEquationIndex < shiftEquations.length; shiftEquationIndex ++) {
       let shiftEquation = shiftEquations[shiftEquationIndex];
