@@ -165,7 +165,7 @@ function getResults(numbers, operations, value) {
       let tempEquation = applyOperation(shiftEquation, operationSet);
       let parser = new Parser();
       let expr = parser.parse(tempEquation);
-      let result = parseInt(expr.evaluate());
+      let result = expr.evaluate();
 
       if (isInt(result) && ((value !== undefined && result == value) || value == undefined)) {
         if (results[result] === undefined) {
