@@ -27,7 +27,7 @@ $ node index.js "*" "[1,2,3,4,5,6,7,8,9]"
 $ node index.js "*" "[8,8,8,8,8]"
 ```
 
-To limit or add to the list of operations possible simply provide an array of string operations inside of a string as the 3rd parameter. By default the operations are `"['||', '*', '^', '-', '+']"`
+To limit or add to the list of operations possible simply provide an array of string operations inside of a string as the 3rd parameter. By default the operations are `"['||', '*', '^', '-', '+']"`. The functions are defined by the [expr-eval](https://github.com/silentmatt/expr-eval) npm libraries [Binary operaters](https://github.com/silentmatt/expr-eval/blob/master/src/parser.js#L73).
 
 ```
 $ node index.js "*" "[1,2,3,4,5,6,7,8,9]" "['-', '+']"
