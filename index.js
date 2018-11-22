@@ -4,44 +4,9 @@ const Parser = require('expr-eval').Parser;
 const Groups = require('./groups.js');
 
 const numbers = [1,2,3,4,5,6,7,8,9];
-// const numbers = [1,2,3,4,5];
 const operations = ['+', '-', '*', '^', '||'];
-const NUMBER_KEY = 'I';
-const OPERATION_KEY = 'P';
-
-/**
- * Sets up the grouping in an equation.
- * 
- * @param  {number} count The amount of numbers in the equation
- * @param  {number} shift The shift from left to right.
- * @param  {number} depth How many groups are suppose to exist.
- * @return {string}       The equation.
- */
-function generateEquation(count, shift, depth) {
-
-  if (depth == 0) {
-    let group = [];
-    for (let i = 0; i < count; i ++) {
-      group.push(NUMBER_KEY);
-    } 
-    return group.join(` ${ OPERATION_KEY } `);
-  }
-
-  if (count == 1) {
-    return NUMBER_KEY;
-  } else if (count == 2) {
-    return `${ NUMBER_KEY } ${ OPERATION_KEY } ${ NUMBER_KEY }`;
-  } else {
-    if (shift >= count) {
-      shift = count - 1;
-    }
-
-    let left = Math.round(count * (shift / count));
-    let right = Math.round(count * (1 - (shift / count)));
-
-    return ` ( ${ generateEquation(left, shift, depth - 1) } ) ${ OPERATION_KEY } ( ${ generateEquation(right, shift, depth - 1) } ) `;
-  }
-}
+const NUMBER_KEY = 'N';
+const OPERATION_KEY = 'O';
 
 function generateGroupEquation(numbers) {
   let groups = Groups.generate(numbers.length);
@@ -235,15 +200,16 @@ function getResults(numbers, operations, value) {
  * @param  {array} results The results.
  */
 function saveResults(results) {
+  fs.writeFile('./results.csv', 'result,equation\n', function() {
+    for (let index in results) {
+      let indexResults = "";
+      for (let equationIndex in results[index]) {
+        indexResults += index + ',' + results[index][equationIndex] + "\n";
+      }
 
-  fs.writeFile('./results.csv', 'result,equation\n');
-  for (let index in results) {
-    let indexResults = "";
-    for (let equationIndex in results[index]) {
-      indexResults += index + ',' + results[index][equationIndex] + "\n";
+      fs.appendFileSync('./results.csv', indexResults);
     }
-    fs.appendFile('./results.csv', indexResults);
-  }
+  });
 }
 
 saveResults(getResults(
