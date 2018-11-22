@@ -5,63 +5,50 @@ const Groups = require('./groups.js');
 
 const numbers = [1,2,3,4,5,6,7,8,9];
 const operations = ['+', '-', '*', '^', '||'];
-const NUMBER_KEY = 'N';
-const OPERATION_KEY = 'O';
 
 function generateGroupEquation(numbers) {
-  let groups = Groups.generate(numbers.length);
-  let joinNumbers = `) ${OPERATION_KEY} (`;
+  let groups = Groups.stringify(Groups.generate(numbers.length));
+
   let strGroups = {};
 
   for (let groupIndex in groups) {
     let group = groups[groupIndex];
-    strGroups[groupIndex] = [];
-
-    for (let equationIndex = 0; equationIndex < group.length; equationIndex ++ ) {
-      strGroups[groupIndex].push(`(${group[equationIndex].join(joinNumbers)})`);
-    }
-  }
-
-  let newStrGroups = {};
-
-  for (let groupIndex in strGroups) {
-    let group = strGroups[groupIndex];
     let currentValue = parseInt(groupIndex);
-    newStrGroups[groupIndex] = [];
+    strGroups[groupIndex] = [];
 
     for (let equationIndex = 0; equationIndex < group.length; equationIndex ++ ) {
       let str = group[equationIndex];
 
       if (groupIndex == 2) {
-        newStrGroups[groupIndex].push(str.replace(/1/g, NUMBER_KEY));
+        strGroups[groupIndex].push(str.replace(/1/g, Groups.NUMBER_KEY));
       } else {
         // go through all potential numbers in the string at this point
         for (let searchableValue = group.length - 1; searchableValue > 1; searchableValue --) {
           // if this equation has this value lets add more values to it.
           // saGrpEqIndex == Searchable Group Equation Index
           if (str.indexOf(searchableValue) !== -1) {
-            let searchableEquations = newStrGroups[searchableValue];
-            for (let saGrpEqIndex in newStrGroups[searchableValue]) {
+            let searchableEquations = strGroups[searchableValue];
+            for (let saGrpEqIndex in strGroups[searchableValue]) {
               let newStr = str.replace(new RegExp(searchableValue, "g"), searchableEquations[saGrpEqIndex]);
-              newStr = newStr.replace(/1/g, NUMBER_KEY);
+              newStr = newStr.replace(/1/g, Groups.NUMBER_KEY);
 
-              newStrGroups[groupIndex].push(newStr);
+              strGroups[groupIndex].push(newStr);
             } 
           } else {
-            newStrGroups[groupIndex].push(str.replace(/1/g, NUMBER_KEY));
+            strGroups[groupIndex].push(str.replace(/1/g, Groups.NUMBER_KEY));
           }
         }
       }
     }
 
-    newStrGroups[groupIndex] = newStrGroups[groupIndex].filter(function(equation, index, newStrGroups) {
+    strGroups[groupIndex] = strGroups[groupIndex].filter(function(equation, index, strGroups) {
       return !(/\d/g.test(equation));
     }).filter(function (equation, index, equations) {
       return equations.lastIndexOf(equation) === index;
     });;
   }
 
-  return newStrGroups[numbers.length];
+  return strGroups[numbers.length];
 }
 
 /**
@@ -74,7 +61,7 @@ function generateGroupEquation(numbers) {
 function insertOrder(equation, order) {
 
   for (number in order) {
-    equation = equation.replace(NUMBER_KEY, order[number]);
+    equation = equation.replace(Groups.NUMBER_KEY, order[number]);
   }
 
   return equation;
@@ -138,7 +125,7 @@ function generateOperationSets(numbers, operations) {
 function applyOperation(equation, operationSet) {
 
   for (operation in operationSet) {
-    equation = equation.replace(OPERATION_KEY, operationSet[operation]);
+    equation = equation.replace(Groups.OPERATION_KEY, operationSet[operation]);
   }
 
   return equation;

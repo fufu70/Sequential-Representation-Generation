@@ -1,6 +1,12 @@
 
 let groups = {}; // all of the groups that can exist from 1 to n size equations
-let size = 6;
+const OPERATION_KEY = 'O';
+const JOIN_NUMBERS = `) ${OPERATION_KEY} (`;
+const NUMBER_KEY = 'N';
+
+exports.OPERATION_KEY = OPERATION_KEY;
+exports.JOIN_NUMBERS = JOIN_NUMBERS;
+exports.NUMBER_KEY = NUMBER_KEY;
 
 function addGroupNumberEquations(equation, number) {
   if (equation.length != 1) {
@@ -82,3 +88,18 @@ exports.generate = function (number) {
 
   return groups;
 };
+
+exports.stringify = function(groups) {
+  let strGroups = {};
+
+  for (let groupIndex in groups) {
+    let group = groups[groupIndex];
+    strGroups[groupIndex] = [];
+
+    for (let equationIndex = 0; equationIndex < group.length; equationIndex ++ ) {
+      strGroups[groupIndex].push(`(${group[equationIndex].join(JOIN_NUMBERS)})`);
+    }
+  }
+
+  return strGroups;
+}
