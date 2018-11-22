@@ -155,7 +155,7 @@ function getResults(numbers, operations, value) {
   // Get all of the operations and equations
   const operationSets = generateOperationSets(numbers, operations);
   const shiftEquations = generateShiftEquations(numbers);
-  let results = [];
+  let results = {};
 
   // Save all of the potential equations and operations
   for (let operationSetIndex = 0; operationSetIndex < operationSets.length; operationSetIndex ++) {
@@ -167,10 +167,9 @@ function getResults(numbers, operations, value) {
       let expr = parser.parse(tempEquation);
       let result = parseInt(expr.evaluate());
 
-      if (result >= 0 && result <= 11111 && isInt(result) &&
-        ((value !== undefined && result == value) || value == undefined)) {
+      if (isInt(result) && ((value !== undefined && result == value) || value == undefined)) {
         if (results[result] === undefined) {
-          results[result] = [];
+          results[result] = [tempEquation];
         } else {
           results[result].push(tempEquation);
         }
