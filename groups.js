@@ -1,5 +1,4 @@
 
-let groups = {}; // all of the groups that can exist from 1 to n size equations
 const OPERATION_KEY = 'O';
 const JOIN_NUMBERS = `) ${OPERATION_KEY} (`;
 const NUMBER_KEY = 'N';
@@ -8,23 +7,25 @@ exports.OPERATION_KEY = OPERATION_KEY;
 exports.JOIN_NUMBERS = JOIN_NUMBERS;
 exports.NUMBER_KEY = NUMBER_KEY;
 
-function addGroupNumberEquations(equation, number) {
+function addGroupNumberEquations(equation, group) {
   if (equation.length != 1) {
     if (equation[0] == 1) {
-      groups[number].push(equation.slice(0));
+      group.push(equation.slice(0));
     } else {
       for (let i = 0; i < equation.length; i ++) {
         equation.push(equation.shift())
-        groups[number].push(equation.slice(0));
+        group.push(equation.slice(0));
       }   
     }
   }
+
+  return group;
 }
 
-function shiftThrough(equation, number) {
+function shiftThrough(equation, group) {
   let pointer = 0;
 
-  addGroupNumberEquations(equation.slice(0), number);
+  group = addGroupNumberEquations(equation.slice(0), group);
 
   for (let pointer = 1; pointer < equation.length; pointer ++) {
 
@@ -32,23 +33,24 @@ function shiftThrough(equation, number) {
     equation[pointer] ++;
 
     if (equation.indexOf(0) == -1) {
-      addGroupNumberEquations(equation.slice(0), number);
+      group = addGroupNumberEquations(equation.slice(0), group);
     }
   }
+
+  return group;
 }
 
 function createGroupNumber(number) {
   let equation = [number];
   let pointer = 0;
-
-  groups[number] = [];
+  let group = [];
 
   do {
     if ((equation[pointer] > 1 && pointer == equation.length - 1) || equation[pointer] == 2) {
       equation.push(1);
       equation[pointer] --;
 
-      shiftThrough(equation.slice(0), number);
+      shiftThrough(equation.slice(0), group);
     } else if (equation[pointer] > 1 && pointer < equation.length - 1) {
       equation[pointer + 1] ++;
       equation[pointer] --;
@@ -57,15 +59,17 @@ function createGroupNumber(number) {
         pointer ++;
       }
 
-      shiftThrough(equation.slice(0), number);
+      shiftThrough(equation.slice(0), group);
     } else {
       pointer --;
     }
   } while (equation[0] != 1)
+
+  return group;
 }
 
-function filterGroupNumber(number) {
-  let equationStrings = groups[number].map(function(equation) {
+function filterGroupNumber(number, group) {
+  let equationStrings = group.map(function(equation) {
     return equation.join(",");
   });
 
@@ -73,7 +77,7 @@ function filterGroupNumber(number) {
     return equationStrings.lastIndexOf(equation) === index;
   });
 
-  groups[number] = equationStrings.map(function(equationString) {
+  return equationStrings.map(function(equationString) {
     return equationString.split(",").map(function(number) {
       return parseInt(number);
     });
@@ -81,9 +85,10 @@ function filterGroupNumber(number) {
 }
 
 exports.generate = function (number) {
+  let groups = {};
   for (let i = 2; i <= number; i ++) {
-    createGroupNumber(i);
-    filterGroupNumber(i);
+    groups[i] = createGroupNumber(i);
+    groups[i] = filterGroupNumber(i, groups[i]);
   }
 
   return groups;
