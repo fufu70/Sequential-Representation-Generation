@@ -154,9 +154,9 @@ function isInt(value) {
 function getResults(numbers, operations, value) {
   // Get all of the operations and equations
   const operationSets = generateOperationSets(numbers, operations);
-  console.log("Operations Set");
+  console.log("Operations Set. Size is " + operationSets.length);
   const shiftEquations = generateShiftEquations(numbers);
-  console.log("Equations Set");
+  console.log("Equations Set. Size is " + shiftEquations.length);
   let results = {};
   console.log("Searching for equations equal to " + value);
 
