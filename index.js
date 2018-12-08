@@ -154,8 +154,11 @@ function isInt(value) {
 function getResults(numbers, operations, value) {
   // Get all of the operations and equations
   const operationSets = generateOperationSets(numbers, operations);
+  console.log("Operations Set");
   const shiftEquations = generateShiftEquations(numbers);
+  console.log("Equations Set");
   let results = {};
+  console.log("Searching for equations equal to " + value);
 
   for (let operationSetIndex = 0; operationSetIndex < operationSets.length; operationSetIndex ++) {
     for (let shiftEquationIndex = 0; shiftEquationIndex < shiftEquations.length; shiftEquationIndex ++) {
@@ -167,6 +170,7 @@ function getResults(numbers, operations, value) {
       let result = expr.evaluate();
 
       if (isInt(result) && ((value !== undefined && result == value) || value == undefined)) {
+        console.log(tempEquation);
         if (results[result] === undefined) {
           results[result] = [tempEquation];
         } else {

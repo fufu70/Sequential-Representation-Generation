@@ -1,30 +1,30 @@
 function reduce(sizeOfSet) {
     var organizations = [];
-    var tempOrg = [];
+    var organization = [];
 
     for (var i = 0; i < sizeOfSet; i ++) {
-        tempOrg = [sizeOfSet - i];
+        organization = [sizeOfSet - i];
         for (var j = 0; j < i; j ++) {
-            tempOrg.push(1);
+            organization.push(1);
         }
-        organizations.push(tempOrg.slice(0));
+        organizations.push(organization.slice(0));
     }
 
     return organizations;
 }
 
 function merge(organizations) {
-    var tempOrgs = [];
-    var tempOrg = [];
+    var newOrgArr = [];
+    var organization = [];
     var pointer = 1;
 
     for (var i = 0; i < organizations.length; i ++) {
-        tempOrg = organizations[i].slice(0);
-        tempOrgs.push(tempOrg.slice(0));
-        while (globalMergePossible(tempOrg, pointer)) {
-            if (mergePossible(tempOrg, pointer)) {
-                tempOrg = mergeIndex(tempOrg, pointer);
-                tempOrgs.push(tempOrg.slice(0));
+        organization = organizations[i].slice(0);
+        newOrgArr.push(organization.slice(0));
+        while (globalMergePossible(organization, pointer)) {
+            if (mergePossible(organization, pointer)) {
+                organization = mergeIndex(organization, pointer);
+                newOrgArr.push(organization.slice(0));
                 pointer ++;
             } else {
                 pointer --;
@@ -32,18 +32,18 @@ function merge(organizations) {
         }
         pointer = 1;
     }
-    return tempOrgs;
+    return newOrgArr;
 }
 
-function mergeIndex(tempOrg, index) {
-    if (tempOrg[index + 1] > 1) { 
-        tempOrg[index] ++;
-        tempOrg[index + 1] --;
+function mergeIndex(organization, index) {
+    if (organization[index + 1] > 1) { 
+        organization[index] ++;
+        organization[index + 1] --;
     } else {
-        var value = tempOrg.splice(index, 1)[0];
-        tempOrg[index] += value; 
+        var value = organization.splice(index, 1)[0];
+        organization[index] += value; 
     }
-    return tempOrg;
+    return organization;
 }
 
 function globalMergePossible(organization, index) {
@@ -51,25 +51,24 @@ function globalMergePossible(organization, index) {
 }
 
 function mergePossible(organization, index) {
-    return organization.length - 1 > index && index > 0 && organization[index - 1] > organization[index];
+    return organization.length - 1 > index && organization[index - 1] > organization[index];
 }
 
 function rotate(organizations) {
-    var tempOrgs = [];
-    var tempOrg = [];
-    var pointer = 1;
+    var newOrgArr = [];
+    var organization = [];
 
     for (var i = 0; i < organizations.length; i ++) {
-        tempOrg = organizations[i].slice(0);
+        organization = organizations[i].slice(0);
 
         do {
-            tempOrgs = tempOrgs.concat(swap(tempOrg.slice(0)));
-            tempOrgs = tempOrgs.concat(swap(tempOrg.slice(0).reverse()));
-            tempOrg.push(tempOrg.shift())
-        } while (tempOrg.toString() !== organizations[i].toString())
+            newOrgArr = newOrgArr.concat(swap(organization.slice(0)));
+            newOrgArr = newOrgArr.concat(swap(organization.slice(0).reverse()));
+            organization.push(organization.shift())
+        } while (organization.toString() !== organizations[i].toString())
     }
 
-    return tempOrgs;
+    return newOrgArr;
 }
 
 function swap(organization) {
