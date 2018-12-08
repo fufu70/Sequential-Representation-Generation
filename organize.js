@@ -97,6 +97,6 @@ function unique(organizations) {
     return Array.from(set).map(JSON.parse);
 }
 
-exports.generate function(sizeOfSet) {
+exports.generate = function(sizeOfSet) {
     return unique(rotate(merge(reduce(sizeOfSet))));
 }
