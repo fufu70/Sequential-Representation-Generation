@@ -14,7 +14,6 @@ function generateStringOrganizationSet(sizeStringOrganizationSet) {
 
   for (sizeIndex in sizeStringOrganizationSet) {
     let stringOrganization = sizeStringOrganizationSet[sizeIndex];
-    let currentValue = parseInt(sizeIndex);
     stringOrganizationSet[sizeIndex] = [];
 
     for (let i = 0; i < stringOrganization.length; i ++ ) {
@@ -29,7 +28,7 @@ function generateStringOrganizationSet(sizeStringOrganizationSet) {
           // saGrpEqIndex == Searchable Group Equation Index
           if (str.indexOf(searchableValue) !== -1) {
             let searchableEquations = stringOrganizationSet[searchableValue];
-            for (let saGrpEqIndex in stringOrganizationSet[searchableValue]) {
+            for (let saGrpEqIndex in searchableEquations) {
               let newStr = str.replace(new RegExp(searchableValue, "g"), searchableEquations[saGrpEqIndex]);
               newStr = newStr.replace(/1/g, NUMBER_KEY);
 
