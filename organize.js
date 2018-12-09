@@ -59,36 +59,32 @@ function rotate(organizations) {
     var organization = [];
 
     for (var i = 0; i < organizations.length; i ++) {
-        organization = organizations[i].slice(0);
-
-        do {
-            newOrgArr = newOrgArr.concat(swap(organization.slice(0)));
-            newOrgArr = newOrgArr.concat(swap(organization.slice(0).reverse()));
-            organization.push(organization.shift())
-        } while (organization.toString() !== organizations[i].toString())
+        newOrgArr = newOrgArr.concat(orientations(organizations[i]));
     }
 
     return newOrgArr;
 }
 
-function swap(organization) {
-    var organizations = [organization];
-
-    for (var j = 0; j < organization.length; j ++) {
-        for (var k = 0; k < organization.length; k ++) {
-            organization = swapIndex(organization.slice(0), j, k);
-            organizations.push(organization.slice(0))
+function orientations(organization) {
+    if (organization.length == 1 || organization.toString() == organization.reverse().toString()) {
+        return [organization];
+    } else if (organization.length == 2) {
+        return [organization, [organization[1], organization[0]]]
+    } else {
+        orientation_slices = orientations(organization.slice(1));
+        all_orientations = [];
+        let temp_orientation;
+        for (let i in orientation_slices) {
+            compare_orientation = [organization[0]].concat(orientation_slices[i]);
+            temp_orientation = compare_orientation.slice(0);
+            do {
+                temp_orientation.push(temp_orientation.shift());
+                all_orientations.push(temp_orientation.slice(0));
+            } while (temp_orientation.toString() !== compare_orientation.toString())
         }
+
+        return unique(all_orientations);
     }
-
-    return organizations;
-}
-
-function swapIndex(organization, index1, index2) {
-    var temp = organization[index1];
-    organization[index1] = organization[index2];
-    organization[index2] = temp;
-    return organization
 }
 
 function unique(organizations) {
