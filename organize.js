@@ -66,7 +66,7 @@ function rotate(organizations) {
 }
 
 function orientations(organization) {
-    if (organization.length == 1 || organization.toString() == organization.reverse().toString()) {
+    if (organization.length == 1 || organization.toString() == organization.slice(0).reverse().toString()) {
         return [organization];
     } else if (organization.length == 2) {
         return [organization, [organization[1], organization[0]]]
@@ -79,18 +79,40 @@ function orientations(organization) {
             temp_orientation = compare_orientation.slice(0);
             do {
                 temp_orientation.push(temp_orientation.shift());
-                all_orientations.push(temp_orientation.slice(0));
+                if (uniqueOrganization(temp_orientation, all_orientations)) {
+                    all_orientations.push(temp_orientation.slice(0));   
+                } else {
+                    continue;
+                }
             } while (temp_orientation.toString() !== compare_orientation.toString())
         }
 
-        return unique(all_orientations);
+        return all_orientations;
     }
+}
+
+function uniqueOrganization(organization, organizations) {
+    for (let i in organizations) {
+        if (organizations[i].toString() == organization.toString()) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 function unique(organizations) {
     let set  = new Set(organizations.map(JSON.stringify));
     return Array.from(set).map(JSON.parse);
 }
+
+function printOut(set) {
+    for (let i in set) {
+        console.log(set[i]);
+    }
+}
+
+orientations([ 1, 2, 3, 3 ])
 
 exports.generate = function(sizeOfSet) {
     return unique(rotate(merge(reduce(sizeOfSet))));
