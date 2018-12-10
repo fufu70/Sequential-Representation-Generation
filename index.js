@@ -29,28 +29,28 @@ function isInt(value) {
  */
 function getResults(numbers, operations, value) {
   // Get all of the operations and equations
-  const operationSets = Operation.generate(numbers, operations);
-  console.log("Operations Set. Size is " + operationSets.length);
-  const organizationSets = Organization.generate(numbers);
-  console.log("Equations Set. Size is " + organizationSets.length);
+  const operation_sets = Operation.generate(numbers, operations);
+  console.log("Operations _set. Size is " + operation_sets.length);
+  const organization_sets = Organization.generate(numbers);
+  console.log("Equations _set. Size is " + organization_sets.length);
   let results = {};
   console.log("Searching for equations equal to " + value);
 
-  for (let operationSetIndex = 0; operationSetIndex < operationSets.length; operationSetIndex ++) {
-    for (let shiftEquationIndex = 0; shiftEquationIndex < organizationSets.length; shiftEquationIndex ++) {
-      let organization = organizationSets[shiftEquationIndex];
-      let operationSet = operationSets[operationSetIndex];
-      let tempEquation = Operation.apply(organization, operationSet);
+  for (let operation_set_index = 0; operation_set_index < operation_sets.length; operation_set_index ++) {
+    for (let organization_set_index = 0; organization_set_index < organization_sets.length; organization_set_index ++) {
+      let organization = organization_sets[organization_set_index];
+      let operation_set = operation_sets[operation_set_index];
+      let temp_equation = Operation.apply(organization, operation_set);
       let parser = new Parser();
-      let expr = parser.parse(tempEquation);
+      let expr = parser.parse(temp_equation);
       let result = expr.evaluate();
 
       if (isInt(result) && ((value !== undefined && result == value) || value == undefined)) {
-        console.log(tempEquation);
+        console.log(temp_equation);
         if (results[result] === undefined) {
-          results[result] = [tempEquation];
+          results[result] = [temp_equation];
         } else {
-          results[result].push(tempEquation);
+          results[result].push(temp_equation);
         }
       }
     }
@@ -67,12 +67,12 @@ function getResults(numbers, operations, value) {
 function saveResults(results) {
   fs.writeFile('./results.csv', 'result,equation\n', function() {
     for (let index in results) {
-      let indexResults = "";
-      for (let equationIndex in results[index]) {
-        indexResults += index + ',' + results[index][equationIndex] + "\n";
+      let index_results = "";
+      for (let equation_index in results[index]) {
+        index_results += index + ',' + results[index][equation_index] + "\n";
       }
 
-      fs.appendFileSync('./results.csv', indexResults);
+      fs.appendFileSync('./results.csv', index_results);
     }
   });
 }

@@ -1,9 +1,9 @@
-function reduce(sizeOfSet) {
+function reduce(size_of_set) {
     var organizations = [];
     var organization = [];
 
-    for (var i = 0; i < sizeOfSet; i ++) {
-        organization = [sizeOfSet - i];
+    for (var i = 0; i < size_of_set; i ++) {
+        organization = [size_of_set - i];
         for (var j = 0; j < i; j ++) {
             organization.push(1);
         }
@@ -14,17 +14,17 @@ function reduce(sizeOfSet) {
 }
 
 function merge(organizations) {
-    var newOrgArr = [];
+    var new_organizations = [];
     var organization = [];
     var pointer = 1;
 
     for (var i = 0; i < organizations.length; i ++) {
         organization = organizations[i].slice(0);
-        newOrgArr.push(organization.slice(0));
+        new_organizations.push(organization.slice(0));
         while (globalMergePossible(organization, pointer)) {
             if (mergePossible(organization, pointer)) {
                 organization = mergeIndex(organization, pointer);
-                newOrgArr.push(organization.slice(0));
+                new_organizations.push(organization.slice(0));
                 pointer ++;
             } else {
                 pointer --;
@@ -32,7 +32,7 @@ function merge(organizations) {
         }
         pointer = 1;
     }
-    return newOrgArr;
+    return new_organizations;
 }
 
 function mergeIndex(organization, index) {
@@ -55,14 +55,13 @@ function mergePossible(organization, index) {
 }
 
 function rotate(organizations) {
-    var newOrgArr = [];
-    var organization = [];
+    var new_organizations = [];
 
     for (var i = 0; i < organizations.length; i ++) {
-        newOrgArr = newOrgArr.concat(orientations(organizations[i]));
+        new_organizations = new_organizations.concat(orientations(organizations[i]));
     }
 
-    return newOrgArr;
+    return new_organizations;
 }
 
 function orientations(organization) {
@@ -71,9 +70,9 @@ function orientations(organization) {
     } else if (organization.length == 2) {
         return [organization, [organization[1], organization[0]]]
     } else {
-        orientation_slices = orientations(organization.slice(1));
-        all_orientations = [];
-        let temp_orientation;
+        let orientation_slices = orientations(organization.slice(1));
+        let all_orientations = [];
+        let temp_orientation = [];
         for (let i in orientation_slices) {
             compare_orientation = [organization[0]].concat(orientation_slices[i]);
             temp_orientation = compare_orientation.slice(0);
@@ -81,8 +80,6 @@ function orientations(organization) {
                 temp_orientation.push(temp_orientation.shift());
                 if (uniqueOrganization(temp_orientation, all_orientations)) {
                     all_orientations.push(temp_orientation.slice(0));   
-                } else {
-                    continue;
                 }
             } while (temp_orientation.toString() !== compare_orientation.toString())
         }
@@ -106,14 +103,6 @@ function unique(organizations) {
     return Array.from(set).map(JSON.parse);
 }
 
-function printOut(set) {
-    for (let i in set) {
-        console.log(set[i]);
-    }
-}
-
-orientations([ 1, 2, 3, 3 ])
-
-exports.generate = function(sizeOfSet) {
-    return unique(rotate(merge(reduce(sizeOfSet))));
+exports.generate = function(size_of_set) {
+    return unique(rotate(merge(reduce(size_of_set))));
 }

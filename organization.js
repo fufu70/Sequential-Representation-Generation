@@ -8,71 +8,71 @@ exports.OPERATION_KEY = OPERATION_KEY;
 exports.JOIN_NUMBERS = JOIN_NUMBERS;
 exports.NUMBER_KEY = NUMBER_KEY;
 
-function generateStringOrganizationSet(sizeStringOrganizationSet) {
-  let stringOrganizationSet = {};
-  let sizeIndex = 0;
+function generateStringOrganizationSet(size_string_organization_set) {
+  let string_organization_set = {};
+  let size_index = 0;
 
-  for (sizeIndex in sizeStringOrganizationSet) {
-    let stringOrganization = sizeStringOrganizationSet[sizeIndex];
-    stringOrganizationSet[sizeIndex] = [];
+  for (size_index in size_string_organization_set) {
+    let stringOrganization = size_string_organization_set[size_index];
+    string_organization_set[size_index] = [];
 
     for (let i = 0; i < stringOrganization.length; i ++ ) {
       let str = stringOrganization[i];
 
-      if (sizeIndex == 2) {
-        stringOrganizationSet[sizeIndex].push(str.replace(/1/g, NUMBER_KEY));
+      if (size_index == 2) {
+        string_organization_set[size_index].push(str.replace(/1/g, NUMBER_KEY));
       } else {
         // go through all potential numbers in the string at this point
         for (let searchableValue = stringOrganization.length - 1; searchableValue > 1; searchableValue --) {
           // if this equation has this value lets add more values to it.
           // saGrpEqIndex == Searchable Group Equation Index
           if (str.indexOf(searchableValue) !== -1) {
-            let searchableEquations = stringOrganizationSet[searchableValue];
+            let searchableEquations = string_organization_set[searchableValue];
             for (let saGrpEqIndex in searchableEquations) {
               let newStr = str.replace(new RegExp(searchableValue, "g"), searchableEquations[saGrpEqIndex]);
               newStr = newStr.replace(/1/g, NUMBER_KEY);
 
-              stringOrganizationSet[sizeIndex].push(newStr);
+              string_organization_set[size_index].push(newStr);
             } 
           } else {
-            stringOrganizationSet[sizeIndex].push(str.replace(/1/g, NUMBER_KEY));
+            string_organization_set[size_index].push(str.replace(/1/g, NUMBER_KEY));
           }
         }
       }
     }
 
-    stringOrganizationSet[sizeIndex] = stringOrganizationSet[sizeIndex].filter(function(equation, index, stringOrganizationSet) {
+    string_organization_set[size_index] = string_organization_set[size_index].filter(function(equation, index, string_organization_set) {
       return !(/\d/g.test(equation));
     }).filter(function (equation, index, equations) {
       return equations.lastIndexOf(equation) === index;
     });
   }
 
-  return stringOrganizationSet[sizeIndex];
+  return string_organization_set[size_index];
 }
 
 function generateSizeOrganizationSets(number) {
-  let sizeOrganizationSets = {};
+  let size_organization_sets = {};
   for (let i = 2; i <= number; i ++) {
-    sizeOrganizationSets[i] = Organize.generate(i);
+    size_organization_sets[i] = Organize.generate(i);
   }
 
-  return sizeOrganizationSets;
+  return size_organization_sets;
 };
 
-function stringify(sizeOrganizationSets) {
-  let sizeStringOrganizationSet = {};
+function stringify(size_organization_sets) {
+  let size_string_organization_set = {};
 
-  for (let sizeIndex in sizeOrganizationSets) {
-    let group = sizeOrganizationSets[sizeIndex];
-    sizeStringOrganizationSet[sizeIndex] = [];
+  for (let size_index in size_organization_sets) {
+    let group = size_organization_sets[size_index];
+    size_string_organization_set[size_index] = [];
 
-    for (let equationIndex = 0; equationIndex < group.length; equationIndex ++ ) {
-      sizeStringOrganizationSet[sizeIndex].push(`(${group[equationIndex].join(JOIN_NUMBERS)})`);
+    for (let equation_index = 0; equation_index < group.length; equation_index ++ ) {
+      size_string_organization_set[size_index].push(`(${group[equation_index].join(JOIN_NUMBERS)})`);
     }
   }
 
-  return generateStringOrganizationSet(sizeStringOrganizationSet);
+  return generateStringOrganizationSet(size_string_organization_set);
 }
 
 
@@ -92,13 +92,13 @@ function insertOrder(organization, numberSet) {
   return organization;
 }
 
-exports.generate  = function (numbers) {
-  let sizeOrganizationSets = generateSizeOrganizationSets(numbers.length);
-  let stringOrganizationSet = stringify(sizeOrganizationSets);
+exports.generate = function (numbers) {
+  let size_organization_sets = generateSizeOrganizationSets(numbers.length);
+  let string_organization_set = stringify(size_organization_sets);
   let organizations = [];
 
-  for (let organizationIndex in stringOrganizationSet) {
-    organizations.push(insertOrder(stringOrganizationSet[organizationIndex], numbers));
+  for (let organization_index in string_organization_set) {
+    organizations.push(insertOrder(string_organization_set[organization_index], numbers));
   }
 
   return organizations;

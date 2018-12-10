@@ -7,23 +7,23 @@ const Organization = require('./organization.js');
  * @return {[type]}            [description]
  */
 exports.generate = function(numbers, operations) {
-  const operationSize = operations.length
-  const operationsPerEquation = numbers.length - 1;
-  const totalOperations = Math.pow(operationSize, operationsPerEquation);
+  const operation_size = operations.length
+  const operations_per_equation = numbers.length - 1;
+  const total_operations = Math.pow(operation_size, operations_per_equation);
 
-  let operationSets = [];
+  let operation_sets = [];
 
-  for (let i = 0; i < totalOperations; i ++) {
-    let operationSet = [];
+  for (let i = 0; i < total_operations; i ++) {
+    let operation_set = [];
 
-    for (let j = 0; j < operationsPerEquation; j ++) {
-      operationSet.push(operations[Math.floor(i / Math.pow(operationSize, j)) % operationSize]);
+    for (let j = 0; j < operations_per_equation; j ++) {
+      operation_set.push(operations[Math.floor(i / Math.pow(operation_size, j)) % operation_size]);
     }
 
-    operationSets.push(operationSet);
+    operation_sets.push(operation_set);
   }
 
-  return operationSets;
+  return operation_sets;
 
 }
 
@@ -31,13 +31,13 @@ exports.generate = function(numbers, operations) {
  * Applies the operation set to the equation.
  * 
  * @param  {string} equation     A string representing the equation
- * @param  {array}  operationSet An array of the operations that need to be placed in order.
+ * @param  {array}  operation_set An array of the operations that need to be placed in order.
  * @return {string}              The equation with the operations inserted.
  */
-exports.apply = function(equation, operationSet) {
+exports.apply = function(equation, operation_set) {
 
-  for (operation in operationSet) {
-    equation = equation.replace(Organization.OPERATION_KEY, operationSet[operation]);
+  for (operation in operation_set) {
+    equation = equation.replace(Organization.OPERATION_KEY, operation_set[operation]);
   }
 
   return equation;
