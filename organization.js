@@ -13,26 +13,26 @@ function generateStringOrganizationSet(size_string_organization_set) {
   let size_index = 0;
 
   for (size_index in size_string_organization_set) {
-    let stringOrganization = size_string_organization_set[size_index];
+    let string_organization = size_string_organization_set[size_index];
     string_organization_set[size_index] = [];
 
-    for (let i = 0; i < stringOrganization.length; i ++ ) {
-      let str = stringOrganization[i];
+    for (let i = 0; i < string_organization.length; i ++ ) {
+      let str = string_organization[i];
 
       if (size_index == 2) {
         string_organization_set[size_index].push(str.replace(/1/g, NUMBER_KEY));
       } else {
         // go through all potential numbers in the string at this point
-        for (let searchableValue = stringOrganization.length - 1; searchableValue > 1; searchableValue --) {
+        for (let searchable_value = string_organization.length - 1; searchable_value > 1; searchable_value --) {
           // if this equation has this value lets add more values to it.
-          // saGrpEqIndex == Searchable Group Equation Index
-          if (str.indexOf(searchableValue) !== -1) {
-            let searchableEquations = string_organization_set[searchableValue];
-            for (let saGrpEqIndex in searchableEquations) {
-              let newStr = str.replace(new RegExp(searchableValue, "g"), searchableEquations[saGrpEqIndex]);
-              newStr = newStr.replace(/1/g, NUMBER_KEY);
+          // sa_grp_eq_index == Searchable Group Equation Index
+          if (str.indexOf(searchable_value) !== -1) {
+            let searchable_equations = string_organization_set[searchable_value];
+            for (let sa_grp_eq_index in searchable_equations) {
+              let new_str = str.replace(new RegExp(searchable_value, "g"), searchable_equations[sa_grp_eq_index]);
+              new_str = new_str.replace(/1/g, NUMBER_KEY);
 
-              string_organization_set[size_index].push(newStr);
+              string_organization_set[size_index].push(new_str);
             } 
           } else {
             string_organization_set[size_index].push(str.replace(/1/g, NUMBER_KEY));
@@ -79,14 +79,12 @@ function stringify(size_organization_sets) {
 /**
  * Inserts the order of numbers into the given equation.
  * 
- * @param  {string} equation A string representing the equation
- * @param  {array}  order    An array of numbers that need to be placed in order.
  * @return {string}          The equation with the numbers inserted.
  */
-function insertOrder(organization, numberSet) {
+function insertOrder(organization, number_set) {
 
-  for (number in numberSet) {
-    organization = organization.replace(NUMBER_KEY, numberSet[number]);
+  for (number in number_set) {
+    organization = organization.replace(NUMBER_KEY, number_set[number]);
   }
 
   return organization;
