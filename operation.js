@@ -24,7 +24,6 @@ exports.generate = function(numbers, operations) {
   }
 
   return operation_sets;
-
 }
 
 /**
