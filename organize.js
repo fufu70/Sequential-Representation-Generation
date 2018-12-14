@@ -13,14 +13,27 @@ function reduce(size_of_set) {
     return organizations;
 }
 
+
 function merge(organizations) {
     var new_organizations = [];
     var organization = [];
     var pointer = 1;
 
     for (var i = 0; i < organizations.length; i ++) {
+        pointer = 1;
         organization = organizations[i].slice(0);
-        new_organizations.push(organization.slice(0));
+        // quick merge
+        while (mergePossible(organization, pointer)) {
+            organization = mergeIndex(organization, pointer);
+            new_organizations.push(organization.slice(0));
+            if (organization[pointer] == organization[0]) {
+                pointer ++;
+            }
+        }
+
+        pointer = 1;
+        organization = organizations[i].slice(0);
+        // whole merge
         while (globalMergePossible(organization, pointer)) {
             if (mergePossible(organization, pointer)) {
                 organization = mergeIndex(organization, pointer);
@@ -30,9 +43,9 @@ function merge(organizations) {
                 pointer --;
             }
         }
-        pointer = 1;
     }
-    return new_organizations;
+
+    return unique(new_organizations.concat(organizations));
 }
 
 function mergeIndex(organization, index) {
