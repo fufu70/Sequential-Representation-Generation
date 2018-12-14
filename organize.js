@@ -13,7 +13,6 @@ function reduce(size_of_set) {
     return organizations;
 }
 
-
 function merge(organizations) {
     var new_organizations = [];
     var organization = [];
@@ -45,7 +44,7 @@ function merge(organizations) {
         }
     }
 
-    return unique(new_organizations.concat(organizations));
+    return unique(organizations.concat(new_organizations));
 }
 
 function mergeIndex(organization, index) {
