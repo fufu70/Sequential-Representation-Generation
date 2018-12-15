@@ -19,32 +19,43 @@ function merge(organizations) {
     var pointer = 1;
 
     for (var i = 0; i < organizations.length; i ++) {
-        pointer = 1;
-        organization = organizations[i].slice(0);
-        // quick merge
-        while (mergePossible(organization, pointer)) {
-            organization = mergeIndex(organization, pointer);
-            new_organizations.push(organization.slice(0));
-            if (organization[pointer] == organization[0]) {
-                pointer ++;
-            }
-        }
-
-        pointer = 1;
-        organization = organizations[i].slice(0);
-        // whole merge
-        while (globalMergePossible(organization, pointer)) {
-            if (mergePossible(organization, pointer)) {
-                organization = mergeIndex(organization, pointer);
-                new_organizations.push(organization.slice(0));
-                pointer ++;
-            } else {
-                pointer --;
-            }
-        }
+        new_organizations = new_organizations.concat(quickMerge(organizations[i].slice(0)));
+        new_organizations = new_organizations.concat(wholeMerge(organizations[i].slice(0)));
     }
 
     return unique(organizations.concat(new_organizations));
+}
+
+function quickMerge(organization) {
+    let pointer = 1;
+    let organizations = [];
+    // quick merge
+    while (mergePossible(organization, pointer)) {
+        organization = mergeIndex(organization, pointer);
+        organizations.push(organization.slice(0));
+        if (organization[pointer] == organization[0]) {
+            pointer ++;
+        }
+    }
+
+    return organizations;
+}
+
+function wholeMerge(organization) {
+    let pointer = 1;
+    let organizations = [];
+    // quick merge
+    while (globalMergePossible(organization, pointer)) {
+        if (mergePossible(organization, pointer)) {
+            organization = mergeIndex(organization, pointer);
+            organizations.push(organization.slice(0));
+            pointer ++;
+        } else {
+            pointer --;
+        }
+    }
+    
+    return organizations;
 }
 
 function mergeIndex(organization, index) {
