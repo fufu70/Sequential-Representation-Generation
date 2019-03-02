@@ -56,6 +56,10 @@ function getResults(numbers, operations, value) {
     }
   }
 
+  if (Object.keys(results).length == 0) {
+    console.log("No results found");
+  }
+
   return results;
 }
 
