@@ -5,7 +5,8 @@ const Organization = require('./organization.js');
 const Operation = require('./operation.js');
 
 const numbers = [1,2,3,4,5,6,7,8,9];
-const operations = ['+', '-', '*', '^', '||'];
+const operations = ['+', '-', '*', '/', '||'];
+const inner_operations = ['', '/100', '!'];
 
 // Short-circuiting, and saving a parse operation
 function isInt(value) {
@@ -13,8 +14,26 @@ function isInt(value) {
   if (isNaN(value)) {
     return false;
   }
-  x = parseFloat(value);
+  x = curbValue(parseFloat(value));
   return (x | 0) === x;
+}
+
+// temporary solution for nodejs fault
+function curbValue(value, compare) {
+  if (Math.abs(value - Math.round(value)) < 0.0000005) {
+    return Math.round(value);
+  } else {
+    return value;
+  }
+}
+
+function addValue(value, result) {
+  if (isInt(result)) {
+    result = curbValue(result);
+    return ((value !== undefined && result == value) || value == undefined);
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -29,28 +48,32 @@ function isInt(value) {
  */
 function getResults(numbers, operations, value) {
   // Get all of the operations and equations
-  const operation_sets = Operation.generate(numbers, operations);
-  console.log("Operations _set. Size is " + operation_sets.length);
+  const operation_outer_sets = Operation.generate(numbers, operations);
+  const operation_inner_sets = Operation.generate(numbers, inner_operations);
+  console.log("Operations _set. Size is " + operation_outer_sets.length * operation_inner_sets.length);
   const organization_sets = Organization.generate(numbers);
-  console.log("Equations _set. Size is " + organization_sets.length);
+  console.log("Organizations _set. Size is " + organization_sets.length);
   let results = {};
   console.log("Searching for equations equal to " + value);
 
-  for (let operation_set_index = 0; operation_set_index < operation_sets.length; operation_set_index ++) {
-    for (let organization_set_index = 0; organization_set_index < organization_sets.length; organization_set_index ++) {
-      let organization = organization_sets[organization_set_index];
-      let operation_set = operation_sets[operation_set_index];
-      let temp_equation = Operation.apply(organization, operation_set);
-      let parser = new Parser();
-      let expr = parser.parse(temp_equation);
-      let result = expr.evaluate();
+  for (let operation_outer_set_index = 0; operation_outer_set_index < operation_outer_sets.length; operation_outer_set_index ++) {
+    for (let operation_inner_set_index = 0; operation_inner_set_index < operation_inner_sets.length; operation_inner_set_index ++) {
+      for (let organization_set_index = 0; organization_set_index < organization_sets.length; organization_set_index ++) {
+        let organization = organization_sets[organization_set_index];
+        let operation_outer_set = operation_outer_sets[operation_outer_set_index];
+        let operation_inner_set = operation_inner_sets[operation_inner_set_index];
+        let temp_equation = Operation.apply(organization, operation_outer_set, operation_inner_set);
+        let parser = new Parser();
+        let expr = parser.parse(temp_equation);
+        let result = expr.evaluate();
 
-      if (isInt(result) && ((value !== undefined && result == value) || value == undefined)) {
-        console.log(temp_equation);
-        if (results[result] === undefined) {
-          results[result] = [temp_equation];
-        } else {
-          results[result].push(temp_equation);
+        if (addValue(value, result)) {
+          if (results[result] === undefined) {
+            results[result] = [temp_equation];
+          } else {
+            results[result].push(temp_equation);
+          }
+          console.log(temp_equation);
         }
       }
     }

@@ -33,11 +33,19 @@ exports.generate = function(numbers, operations) {
  * @param  {array}  operation_set An array of the operations that need to be placed in order.
  * @return {string}              The equation with the operations inserted.
  */
-exports.apply = function(equation, operation_set) {
-
-  for (operation in operation_set) {
-    equation = equation.replace(Organization.OPERATION_KEY, operation_set[operation]);
+exports.apply = function(equation, operation_outer_set, operation_inner_set) {
+  for (operation_outer in operation_outer_set) {
+    for (operation_inner in operation_inner_set) {
+      equation = equation.replace(Organization.INNER_OPERATION_KEY, operation_inner_set[operation_inner]);
+      equation = equation.replace(Organization.OUTER_OPERATION_KEY, operation_outer_set[operation_outer]);
+    }
   }
 
   return equation;
+}
+
+const INNER_OPERATIONS = ['', '!', '%']
+
+function isInnerOperation(func) {
+  return INNER_OPERATIONS.indexOf(func) != -1;
 }
