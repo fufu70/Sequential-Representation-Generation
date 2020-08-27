@@ -1,10 +1,12 @@
 const Organize = require('./organize.js');
 
-const OPERATION_KEY = 'O';
-const JOIN_NUMBERS = `) ${OPERATION_KEY} (`;
+const OUTER_OPERATION_KEY = 'O';
+const INNER_OPERATION_KEY = 'I';
+const JOIN_NUMBERS = `) ${OUTER_OPERATION_KEY} (`;
 const NUMBER_KEY = 'N';
 
-exports.OPERATION_KEY = OPERATION_KEY;
+exports.OUTER_OPERATION_KEY = OUTER_OPERATION_KEY;
+exports.INNER_OPERATION_KEY = INNER_OPERATION_KEY;
 exports.JOIN_NUMBERS = JOIN_NUMBERS;
 exports.NUMBER_KEY = NUMBER_KEY;
 
@@ -20,7 +22,7 @@ function generateStringOrganizationSet(size_string_organization_set) {
             let str = string_organization[i];
 
             if (size_index == 2) {
-                string_organization_set[size_index].push(str.replace(/1/g, NUMBER_KEY));
+                string_organization_set[size_index].push(str.replace(/1/g, NUMBER_KEY + INNER_OPERATION_KEY));
             } else {
                 // go through all potential numbers in the string at this point
                 for (let searchable_value = string_organization.length - 1; searchable_value > 1; searchable_value --) {
@@ -30,11 +32,11 @@ function generateStringOrganizationSet(size_string_organization_set) {
                         let searchable_equations = string_organization_set[searchable_value];
                         for (let sa_grp_eq_index in searchable_equations) {
                             let new_str = str.replace(new RegExp(searchable_value, "g"), searchable_equations[sa_grp_eq_index]);
-                            new_str = new_str.replace(/1/g, NUMBER_KEY);
+                            new_str = new_str.replace(/1/g, NUMBER_KEY + INNER_OPERATION_KEY);
                             string_organization_set[size_index].push(new_str);
                         } 
                     } else {
-                        string_organization_set[size_index].push(str.replace(/1/g, NUMBER_KEY));
+                        string_organization_set[size_index].push(str.replace(/1/g, NUMBER_KEY + INNER_OPERATION_KEY));
                     }
                 }
             }

@@ -36,4 +36,4 @@ $ node index.js 888 "[8,8,8,8,8]" "['||', '*', '^', '-', '+']"
 
 ## Requirements
 
-This project uses (node)[https://nodejs.org/en/]. Once installed you should have npm, the package manager, with it.
+This project uses [node](https://nodejs.org/en/). Once installed you should have npm, the package manager, with it.
